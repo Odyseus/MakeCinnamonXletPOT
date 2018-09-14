@@ -1,0 +1,52 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+
+import os
+import sys
+
+current_directory = os.path.realpath(os.path.abspath(os.path.join(
+    os.path.normpath(os.getcwd()))))
+
+root_folder = os.path.realpath(os.path.abspath(os.path.join(
+    os.path.normpath("{full_path_to_app_folder}"))))
+
+args_to_check = [
+    "generate",
+    "-h",
+    "--help",
+    "--version",
+]
+
+
+def list_has_arg(args_list, arg):
+    for a in args_list:
+        if a[:len(arg)] == arg:
+            return True
+
+        continue
+
+    return False
+
+
+if __name__ == "__main__":
+    args = sys.argv[1:]
+
+    check_for_path = True
+
+    # If any of the arguments in args_to_check isn't passed, then it isn't
+    # needed to check for the --xlet-dir option to be present.
+    args_to_check_length = 0
+
+    # For the moment, args_to_check is a list of options/arguments "without values".
+    # In the future, I migth need to re-use the list_has_arg function.
+    for a in args_to_check:
+        if a in args:
+            args_to_check_length += 1
+
+    check_for_path = not bool(args_to_check_length)
+
+    if check_for_path and ("-x" not in args and not list_has_arg(args, "--xlet-dir=")):
+        args.append('--xlet-dir=%s' % current_directory)
+
+    os.chdir(root_folder)
+    os.execv("%s/app.py" % root_folder, [" "] + args)
