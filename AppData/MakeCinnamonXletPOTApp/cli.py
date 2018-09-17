@@ -62,19 +62,21 @@ Options:
 -k <keyword>, --keyword=<keyword>
     Assign one or more keywords to be passed to the xgettext command.
     If none is passed, the "_" keyword will be used. Specifying this option
-    will override the default one ("_"). If "_" is intended to be used in
+    will override the default one ("_"). If "_" is intended to also be used in
     addition to a new keyword, "_" should also be passed.
 
 -g <pattern>, --ignored-pattern=<pattern>
-    A list of file/folder names patterns to ignore when scanning an xlet
-    directory.
+    A list of file/folder names patterns (in glob-style) to ignore when
+    scanning an xlet directory.
 
 -o <path>, --output=<path>
-    Use this option to specify the location for the generated .pot file.
-    By default <uuid>/po/<uuid>.pot is used.
+    Use this option to specify the location where to store the generated .pot
+    file. By default <uuid>/po/<uuid>.pot is used.
 
 -c, --custom-header
-    Modify the .pot file header with custom data.
+    Modify the .pot file header with custom data. The data will be extracted
+    from a file named exactly <uuid>.pot that should be placed inside an xlet
+    "po" folder.
 
 -a <path>, --scan-additional-file=<path>
     Specify additional files to scan that are outside the xlet folder.
