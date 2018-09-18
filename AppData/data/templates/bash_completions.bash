@@ -4,7 +4,7 @@
 # https://unix.stackexchange.com/a/55622
 
 _have {executable_name} &&
-_decide_nospace(){
+_decide_nospace_{current_date}(){
     if [[ ${1} == "--"*"=" ]] ; then
         compopt -o nospace
     fi
@@ -21,7 +21,7 @@ __make_cinnamon_xlet_pot_{current_date}(){
     # Completion of commands and "first level" options.
     if [[ $COMP_CWORD == 1 ]]; then
         COMPREPLY=( $(compgen -W "$main_options" -- "${cur}") )
-        _decide_nospace ${COMPREPLY[0]}
+        _decide_nospace_{current_date} ${COMPREPLY[0]}
     fi
 
     # Completion of options and sub-commands.
@@ -30,7 +30,7 @@ __make_cinnamon_xlet_pot_{current_date}(){
     case $cmd in
     "-i"|"--install"|"-r"|"--remove")
         COMPREPLY=( $(compgen -W "-x --xlet-dir=" -- "${cur}") )
-        _decide_nospace ${COMPREPLY[0]}
+        _decide_nospace_{current_date} ${COMPREPLY[0]}
         ;;
     "generate")
         COMPREPLY=( $(compgen -W "system_executable" -- "${cur}") )
