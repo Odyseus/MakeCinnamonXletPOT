@@ -12,25 +12,23 @@ root_folder : str
 """
 
 import os
-import sys
 
 from . import app_utils
-from .__init__ import __appname__, __appdescription__, __version__, __status__
-from .python_utils import exceptions, log_system, shell_utils, file_utils
-from .python_utils.docopt import docopt
-
-if sys.version_info < (3, 5):
-    raise exceptions.WrongPythonVersion()
+from .__init__ import __appdescription__
+from .__init__ import __appname__
+from .__init__ import __status__
+from .__init__ import __version__
+from .python_utils import cli_utils
 
 root_folder = os.path.realpath(os.path.abspath(os.path.join(
     os.path.normpath(os.getcwd()))))
 
-# Store the "docopt" document in a variable to SHUT THE HELL UP Sphinx.
-docopt_doc = """{__appname__} {__version__} {__status__}
+docopt_doc = """{appname} {version} ({status})
 
-{__appdescription__}
+{appdescription}
 
 Usage:
+    app.py (-h | --help | --manual | --version)
     app.py [-j | --skip-js] [-p | --skip-python]
            [-o <path> | --output=<path>]
            [-c | --custom-header]
@@ -42,12 +40,14 @@ Usage:
     app.py (-i | --install | -r | --remove)
            [-x <path> | --xlet-dir=<path>]
     app.py generate system_executable
-    app.py (-h | --help | --version)
 
 Options:
 
 -h, --help
     Show this screen.
+
+--manual
+    Show this application manual page.
 
 --version
     Show application version.
@@ -103,50 +103,42 @@ Options:
     The opposite of install, removes translations from the system locale store.
     Again, the xlet UUID will be used to find the correct files to remove.
 
-""".format(__appname__=__appname__,
-           __appdescription__=__appdescription__,
-           __version__=__version__,
-           __status__=__status__)
+""".format(appname=__appname__,
+           appdescription=__appdescription__,
+           version=__version__,
+           status=__status__)
 
 
-class CommandLineTool():
-    """Command line tool.
+class CommandLineInterface(cli_utils.CommandLineInterfaceSuper):
+    """Command line interface.
 
     It handles the arguments parsed by the docopt module.
 
     Attributes
     ----------
+    a : dict
+        Where docopt_args is stored.
     action : method
         Set the method that will be executed when calling CommandLineTool.run().
-    args : dict
-        The dictionary of arguments as returned by docopt parser.
-    logger : object
-        See <class :any:`LogSystem`>.
     """
+    action = None
 
-    def __init__(self, args):
+    def __init__(self, docopt_args):
         """
         Parameters
         ----------
-        args : dict
+        docopt_args : dict
             The dictionary of arguments as returned by docopt parser.
         """
-        super(CommandLineTool, self).__init__()
+        self.a = docopt_args
+        self._cli_header_blacklist = [self.a["--manual"]]
 
-        self.args = args
-        self.action = None
-        logs_storage_dir = "UserData/logs"
-        log_file = log_system.get_log_file(storage_dir=logs_storage_dir,
-                                           prefix="CLI")
-        file_utils.remove_surplus_files(logs_storage_dir, "CLI*")
-        self.logger = log_system.LogSystem(filename=log_file,
-                                           verbose=True)
+        super().__init__(__appname__, "UserData/logs")
 
-        self.logger.info(shell_utils.get_cli_header(__appname__), date=False)
-        print("")
-
-        if args["generate"]:
-            if args["system_executable"]:
+        if self.a["--manual"]:
+            self.action = self.display_manual_page
+        elif self.a["generate"]:
+            if self.a["system_executable"]:
                 self.logger.info("System executable generation...")
                 self.action = self.system_executable_generation
         else:
@@ -161,14 +153,12 @@ class CommandLineTool():
     def scan_xlet(self):
         """See :any:`app_utils.scan_xlet`
         """
-        app_utils.scan_xlet(self.args, self.logger)
+        app_utils.scan_xlet(self.a, self.logger)
 
     def system_executable_generation(self):
-        """See :any:`template_utils.system_executable_generation`
+        """See :any:`cli_utils.CommandLineInterfaceSuper._system_executable_generation`.
         """
-        from .python_utils import template_utils
-
-        template_utils.system_executable_generation(
+        self._system_executable_generation(
             exec_name="make-cinnamon-xlet-pot-cli",
             app_root_folder=root_folder,
             sys_exec_template_path=os.path.join(
@@ -178,22 +168,23 @@ class CommandLineTool():
             logger=self.logger
         )
 
+    def display_manual_page(self):
+        """Display manual page.
+        """
+        from subprocess import call
+
+        call(["man", "./app.py.1"], cwd=os.path.join(root_folder, "AppData", "data", "man"))
+
 
 def main():
-    """Initialize main command line interface.
-
-    Raises
-    ------
-    exceptions.BadExecutionLocation
-        Do not allow to run any command if the "flag" file isn't
-        found where it should be. See :any:`exceptions.BadExecutionLocation`.
+    """Initialize command line interface.
     """
-    if not os.path.exists(".make-cinnamon-xlet-pot.flag"):
-        raise exceptions.BadExecutionLocation()
-
-    arguments = docopt(docopt_doc, version="%s %s %s" % (__appname__, __version__, __status__))
-    cli = CommandLineTool(arguments)
-    cli.run()
+    cli_utils.run_cli(flag_file=".make-cinnamon-xlet-pot.flag",
+                      docopt_doc=docopt_doc,
+                      app_name=__appname__,
+                      app_version=__version__,
+                      app_status=__status__,
+                      cli_class=CommandLineInterface)
 
 
 if __name__ == "__main__":

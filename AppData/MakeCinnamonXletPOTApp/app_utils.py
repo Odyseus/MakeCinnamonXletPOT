@@ -13,18 +13,21 @@ root_folder : str
     from this location without exceptions.
 """
 
-import os
-import json
 import datetime
+import json
+import os
 import time
 
-from shutil import ignore_patterns
-from subprocess import call, run
 from collections import OrderedDict
+from shutil import ignore_patterns
+from subprocess import call
+from subprocess import run
 
 
 from .__init__ import __version__
-from .python_utils import exceptions, polib, cmd_utils
+from .python_utils import cmd_utils
+from .python_utils import exceptions
+from .python_utils import polib
 
 
 root_folder = os.path.realpath(os.path.abspath(os.path.join(
