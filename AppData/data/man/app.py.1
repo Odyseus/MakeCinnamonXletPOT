@@ -1,6 +1,6 @@
 .\" Man page generated from reStructuredText.
 .
-.TH "APP.PY" "1" "Sep 22, 2018" "" "Make Cinnamon Xlet POT"
+.TH "APP.PY" "1" "Oct 06, 2018" "" "Make Cinnamon Xlet POT"
 .SH NAME
 app.py \- A CLI utility to generate POT files for Cinnamon xlets.
 .
@@ -33,7 +33,7 @@ level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
 .SH HINT
 .sp
 This Python application can generate a system executable with Bash completions support. See \fBapp.py generate\fP\&.
-.SH SYNOPSIS
+.SH CLI SYNOPSIS
 .INDENT 0.0
 .INDENT 3.5
 .sp
@@ -63,6 +63,7 @@ Application inspired by \fI\%the script with similar\fP <\fBhttps://github.com/l
 .SH REQUIREMENTS
 .sp
 No mayor requirements are needed to run this application other than Python 3 (Python 3.5+ to be precise).
+.SH DETAILED USAGE
 .SH DIFFERENCES WITH THE ORIGINAL SCRIPT
 .INDENT 0.0
 .IP \(bu 2
@@ -77,6 +78,32 @@ Possibility to \fIblacklist\fP a set of preference keys found inside the \fBsett
 Possibility to pass more than one \fI\-\-keyword\fP argument to the \fIxgettext\fP\&.
 .IP \(bu 2
 Possibility to scan files outside the xlet folder.
+.UNINDENT
+.SS CLI options
+.INDENT 0.0
+.IP \(bu 2
+\fB\-h\fP or \fB\-\-help\fP: Display this application basic help screen.
+.IP \(bu 2
+\fB\-\-manual\fP: Display this application manual.
+.IP \(bu 2
+\fB\-\-version\fP: Show this application version.
+.UNINDENT
+.SS Commands
+.SS app.py generate
+.SS Sub\-commands
+.INDENT 0.0
+.IP \(bu 2
+\fBsystem_executable\fP: Create an executable for the \fBapp.py\fP application on the system \fBPATH\fP to be able to run it from anywhere.
+.INDENT 2.0
+.INDENT 3.5
+.INDENT 0.0
+.IP \(bu 2
+The system executable creation process will ask for an executable name and the absolute path to store the executable file (the default is \fB$HOME/.local/bin\fP).
+.IP \(bu 2
+It will also ask for bash completions creation.
+.UNINDENT
+.UNINDENT
+.UNINDENT
 .UNINDENT
 .SH AUTHOR
 Odyseus
