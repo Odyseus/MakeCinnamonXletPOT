@@ -3,20 +3,20 @@
 # It would have been impossible to create this without the following post on Stack Exchange!!!
 # https://unix.stackexchange.com/a/55622
 
-_have {executable_name} &&
+type "{executable_name}" &> /dev/null &&
 _decide_nospace_{current_date}(){
     if [[ ${1} == "--"*"=" ]] ; then
-        compopt -o nospace
+        type "compopt" &> /dev/null && compopt -o nospace
     fi
 } &&
-__make_cinnamon_xlet_pot_{current_date}(){
+__make_cinnamon_xlet_pot_cli_{current_date}(){
     local cur prev cmd main_options
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
     main_options="-j --skip-js -p --skip-python -o --output= -c --custom-header \
 -a --scan-additional-file= -s --skip-key= -k --keyword= -g --ignored-pattern= -x --xlet-dir= \
--i --install -r --remove generate -h --help --version"
+-i --install -r --remove generate -h --help --manual --version"
 
     # Completion of commands and "first level" options.
     if [[ $COMP_CWORD == 1 ]]; then
@@ -40,4 +40,4 @@ __make_cinnamon_xlet_pot_{current_date}(){
     ;;
     esac
 } &&
-complete -F __make_cinnamon_xlet_pot_{current_date} {executable_name}
+complete -F __make_cinnamon_xlet_pot_cli_{current_date} {executable_name}
