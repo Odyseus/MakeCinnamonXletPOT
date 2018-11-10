@@ -200,11 +200,24 @@ class MissingMandatoryArgument(ExceptionWhitoutTraceBack):
     pass
 
 
+class InvalidArgument(ExceptionWhitoutTraceBack):
+    """InvalidArgument
+    """
+    pass
+
+
 class MethodNotImplemented(ExceptionWhitoutTraceBack):
     """MethodNotImplemented
     """
 
     def __init__(self, method=""):
+        """Initialize.
+
+        Parameters
+        ----------
+        method : str, optional
+            A method name.
+        """
         msg = "The <%s> method needs to be implemented." % method
         print("")
         super().__init__(msg=msg)
@@ -215,6 +228,13 @@ class MissingMandatoryProperty(ExceptionWhitoutTraceBack):
     """
 
     def __init__(self, prop=""):
+        """Initialize.
+
+        Parameters
+        ----------
+        prop : str, optional
+            A property name.
+        """
         msg = "The property <%s> needs to be declared." % prop
         print("")
         super().__init__(msg=msg)
