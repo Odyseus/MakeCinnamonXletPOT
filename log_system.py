@@ -156,7 +156,7 @@ class LogSystem():
         """
         m = "%s%s" % ("%s: " % micro_to_milli(get_date_time()) if date else "", str(msg))
 
-        getattr(logging, type.lower(), "INFO")(m)
+        getattr(logging, type.lower(), "info")(m)
 
         if self.verbose and term:
             try:
