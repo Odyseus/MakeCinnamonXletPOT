@@ -4,6 +4,8 @@
 """
 import fnmatch
 import os
+import re
+import unicodedata
 
 from . import file_utils
 
@@ -29,8 +31,8 @@ def split_on_uppercase(string, keep_contiguous=True):
     """
 
     string_length = len(string)
-    is_lower_around = (lambda: string[i - 1].islower() or  # noqa
-                       string_length > (i + 1) and string[i + 1].islower())
+    is_lower_around = (lambda: string[i - 1].islower()  # noqa
+                       or string_length > (i + 1) and string[i + 1].islower())
 
     start = 0
     parts = []
@@ -185,6 +187,63 @@ def multi_filter(names, patterns):
     for name in names:
         if any(fnmatch.fnmatch(name, pattern) for pattern in patterns):
             yield name
+
+
+def get_valid_filename(string, separator="_"):
+    """Get valid file name.
+
+    Return the given string converted to a string that can be used for a clean
+    filename.
+
+    - Removes leading and trailing spaces.
+    - Converts any succesion of white spaces into a single underscore (configurable, \
+    althogh it cannot be anything other than a dash, an underscore or a dot).
+    - Removes anything that is not an alphanumeric, dash, underscore, or dot.
+
+    Example
+    -------
+
+    >>> get_valid_filename("john's portrait in 2004.jpg")
+    "johns_portrait_in_2004.jpg"
+
+    Note
+    ----
+    Based on: Utilities found in `Django Web framework <https://github.com/django/django>`__
+    """
+    string = re.sub(r"\s+", separator, str(string).strip())
+    return re.sub(r"(?u)[^-\w.]", "", string)
+
+
+def slugify(string, allow_unicode=False):
+    """Slugify.
+
+    - Convert to ASCII if ``allow_unicode`` is False.
+    - Convert spaces to hyphens.
+    - Remove characters that aren't alphanumerics, underscores, or hyphens.
+    - Convert to lowercase.
+    - Strip leading and trailing whitespace.
+
+    Example
+    -------
+
+    >>> slugify("john's portrait in 2004.jpg")
+    "johns-portrait-in-2004jpg"
+
+
+    Note
+    ----
+    Based on: Utilities found in `Django Web framework <https://github.com/django/django>`__
+    """
+    string = str(string)
+
+    if allow_unicode:
+        string = unicodedata.normalize("NFKC", string)
+    else:
+        string = unicodedata.normalize("NFKD", string).encode("ascii", "ignore").decode("ascii")
+
+    string = re.sub(r"[^\w\s-]", "", string).strip().lower()
+
+    return re.sub(r"[-\s]+", "-", string)
 
 
 if __name__ == "__main__":
