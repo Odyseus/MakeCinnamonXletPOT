@@ -20,8 +20,13 @@ class ExceptionWhitoutTraceBack(Exception):
 
     Note
     ----
-    Based on an answer from a `StackOverflow question <https://stackoverflow.com/a/41414413>`__.
-    Stripped the line number report from the original class because is not needed for my usage case.
+    Based on: `Print an error message without printing a traceback... \
+    <https://stackoverflow.com/a/41414413>`__.
+
+    **Modifications**:
+
+    - Stripped the line number report from the original class because it isn't \
+    needed for my usage case.
     """
 
     def __init__(self, msg):
