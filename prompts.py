@@ -37,9 +37,13 @@ def confirm(prompt=None, response=False):
 
     Note
     ----
-        `Based on <http://code.activestate.com/recipes/541096-prompt-the-user-for-confirmation>`__.
-        Eradicated Python 2 code from original function and added "transparent handling" of upper/
-        lower case input responses.
+    Based on: `Prompt the user for confirmation (Python recipe) \
+    <http://code.activestate.com/recipes/541096-prompt-the-user-for-confirmation>`__.
+
+    **Modifications**:
+
+    - Eradicated Python 2 code from original function and added *transparent handling* of \
+    upper/lower case input responses.
 
     Raises
     ------
