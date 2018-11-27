@@ -30,7 +30,7 @@ class ExceptionWhitoutTraceBack(Exception):
     """
 
     def __init__(self, msg):
-        """Initialize.
+        """Initialization.
 
         Parameters
         ----------
@@ -56,7 +56,7 @@ class ExceptionWhitoutTraceBackWarning(Exception):
     """
 
     def __init__(self, msg):
-        """Initialize.
+        """Initialization.
 
         Parameters
         ----------
@@ -74,7 +74,7 @@ class BadExecutionLocation(ExceptionWhitoutTraceBack):
     """
 
     def __init__(self, msg="All commands must be launched from the application's root directory!!!"):
-        """Initialize.
+        """Initialization.
 
         Parameters
         ----------
@@ -89,7 +89,7 @@ class WrongPythonVersion(ExceptionWhitoutTraceBack):
     """
 
     def __init__(self, msg="Minimum Python version supported: 3.5"):
-        """Initialize.
+        """Initialization.
 
         Parameters
         ----------
@@ -122,7 +122,7 @@ class KeyboardInterruption(ExceptionWhitoutTraceBackWarning):
     """
 
     def __init__(self, msg="Operation aborted."):
-        """Initialize.
+        """Initialization.
 
         Parameters
         ----------
@@ -216,7 +216,7 @@ class MethodNotImplemented(ExceptionWhitoutTraceBack):
     """
 
     def __init__(self, method=""):
-        """Initialize.
+        """Initialization.
 
         Parameters
         ----------
@@ -233,7 +233,7 @@ class MissingMandatoryProperty(ExceptionWhitoutTraceBack):
     """
 
     def __init__(self, prop=""):
-        """Initialize.
+        """Initialization.
 
         Parameters
         ----------
