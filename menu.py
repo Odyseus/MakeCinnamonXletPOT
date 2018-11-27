@@ -40,7 +40,7 @@ class Menu(object):
     """
 
     def __init__(self, menu_items=[], title="", message="", prompt="❯ ", refresh=lambda: None):
-        """Initialize.
+        """Initialization.
 
         Parameters
         ----------

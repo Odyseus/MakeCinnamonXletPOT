@@ -206,6 +206,18 @@ def get_valid_filename(string, separator="_"):
     >>> get_valid_filename("john's portrait in 2004.jpg")
     "johns_portrait_in_2004.jpg"
 
+    Parameters
+    ----------
+    string : str
+        The string to validate.
+    separator : str, optional
+        Which character to use to replace white spaces.
+
+    Returns
+    -------
+    str
+        A *safe to use* string for file names.
+
     Note
     ----
     Based on: Utilities found in `Django Web framework <https://github.com/django/django>`__
@@ -229,6 +241,17 @@ def slugify(string, allow_unicode=False):
     >>> slugify("john's portrait in 2004.jpg")
     "johns-portrait-in-2004jpg"
 
+    Parameters
+    ----------
+    string : str
+        The string to slugify.
+    allow_unicode : bool, optional
+        Whether or not to allow unicode characters in the slugified string.
+
+    Returns
+    -------
+    str
+        A slugified string.
 
     Note
     ----
