@@ -135,7 +135,7 @@ def _scan_json(xlet_dir, pot_path, ignored_keys=[]):
 
             data = None
 
-            if rel_root is ".":
+            if rel_root == ".":
                 rel_path = file
             else:
                 rel_path = os.path.join(rel_root, file)
@@ -335,7 +335,7 @@ def _do_install(uuid, xlet_dir):
                       os.path.join(lang_locale_dir, "%s.mo" % uuid)])
                 files_installed += 1
 
-    if files_installed is 0:
+    if files_installed == 0:
         logger.info("Nothing to install.", date=False)
     else:
         logger.info("Installed %i files." % files_installed, date=False)
@@ -361,7 +361,7 @@ def _do_remove(uuid):
                 files_removed += 1
             _remove_empty_folders(lang_locale_dir)
 
-    if files_removed is 0:
+    if files_removed == 0:
         logger.info("Nothing to remove.", date=False)
     else:
         logger.info("Removed %i files" % files_removed, date=False)
