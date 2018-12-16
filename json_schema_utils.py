@@ -68,7 +68,7 @@ def validate(instance, schema,
     errors = sorted(v.iter_errors(instance_copy), key=lambda e: e.path)
 
     if errors:
-        logger.error(shell_utils.get_cli_header(error_header), date=False)
+        logger.error("**%s**" % shell_utils.get_cli_header(error_header), date=False, to_file=False)
 
         for error in errors:
             logger.info(shell_utils.get_cli_separator("-"), date=False)
@@ -76,7 +76,7 @@ def validate(instance, schema,
             abs_path = " > ".join([str(key) for key in list(error.absolute_path)])
 
             if bool(abs_path):
-                logger.info("Index or property path: %s" % str(abs_path), date=False)
+                logger.info("**Index or property path:** %s" % str(abs_path), date=False)
 
             logger.info(error.message, date=False)
 
@@ -88,17 +88,17 @@ def validate(instance, schema,
             error_schema = error.schema
 
             if any(key in error_schema for key in extra_info_keys):
-                logger.info("Extra information", date=False)
+                logger.info("**Extra information**", date=False)
 
                 for x in extra_info_keys:
                     if error_schema.get(x):
-                        logger.info("%s: %s" % (x.capitalize(), error_schema.get(x)), date=False)
+                        logger.info("**%s:** %s" % (x.capitalize(), error_schema.get(x)), date=False)
 
         logger.info(shell_utils.get_cli_separator("-"), date=False)
 
         error_message = "\n".join(["%sTo continue, all errors must be fixed." %
-                                   "" if raise_error else "SchemaValidationError: ",
-                                   "Total errors found: %s" % str(len(errors)),
+                                   ("" if raise_error else "**SchemaValidationError:** "),
+                                   "**Total errors found:** %s" % str(len(errors)),
                                    error_message_extra_info])
         if raise_error:
             raise SchemaValidationError(error_message)

@@ -92,7 +92,7 @@ class LogSystem():
         function
             Function to log messages.
         """
-        def f(msg, term=True, date=True):
+        def f(msg, term=True, date=True, to_file=True):
             """Log message.
 
             Parameters
@@ -104,7 +104,7 @@ class LogSystem():
             date : bool, optional
                 See :any:`LogSystem._update_log` > date
             """
-            self._update_log(msg, log_level=log_level, term=term, date=date)
+            self._update_log(msg, log_level=log_level, term=term, date=date, to_file=to_file)
 
         return f
 
@@ -126,9 +126,9 @@ class LogSystem():
         msg : str
             See :any:`LogSystem._update_log` > msg
         """
-        self._update_log("[DRY_RUN] %s" % str(msg), log_level="LIGHT_MAGENTA", date=False)
+        self._update_log("**[DRY_RUN]** %s" % str(msg), log_level="LIGHT_MAGENTA", date=False)
 
-    def _update_log(self, msg, log_level="ERROR", term=True, date=True):
+    def _update_log(self, msg, log_level="ERROR", term=True, date=True, to_file=True):
         """Do the actual logging.
 
         Parameters
@@ -147,8 +147,9 @@ class LogSystem():
         now = "%s: " % micro_to_milli(get_date_time())
         m = str(msg)
 
-        getattr(logging, "info" if not _log_levels[log_level].get(
-            "logging_support") else log_level.lower())(now + m if date else m)
+        if to_file:
+            getattr(logging, "info" if (log_level not in _log_levels or not _log_levels[log_level].get(
+                "logging_support")) else log_level.lower())(now + m if date else m)
 
         if self.verbose and term:
             pm = ("**%s**" % now) + m if date else m

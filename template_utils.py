@@ -33,7 +33,7 @@ fi
 
 
 bash_completions_step1 = """
-Bash completions creation. Step 1.
+**Bash completions creation. Step 1.**
 
 The file {0}
 will be created.
@@ -41,18 +41,18 @@ will be created.
 
 
 bash_completions_step2 = """
-Bash completions creation. Step 2.
+**Bash completions creation. Step 2.**
 
-The file {0}/.bash_completion will be created if it doesn't exists.
+The file **{0}/.bash_completion** will be created if it doesn't exists.
 
 Or the pertinent code to load bash completions from the .bash_completion.d
 directory will be appended to the existent file.
 
-The {0}/.bash_completion file needs to be manually sourced in your shell's
+The **{0}/.bash_completion** file needs to be manually sourced in your shell's
 configuration file (.bashrc, .zshrc, etc.).
 
 The following is the content that will be appended to the
-{0}/.bash_completion file.
+**{0}/.bash_completion** file.
 """
 
 

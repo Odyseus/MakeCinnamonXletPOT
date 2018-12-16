@@ -61,11 +61,11 @@ def manage_repo(mechanism, action, subtrees=[], do_not_confirm=False,
                 logger.info(shell_utils.get_cli_separator("-"), date=False)
 
                 if dry_run:
-                    logger.log_dry_run("Command that will be executed:\n%s" % cmd)
-                    logger.log_dry_run("Command will be executed at:\n%s" % cwd)
+                    logger.log_dry_run("**Command that will be executed:**\n%s" % cmd)
+                    logger.log_dry_run("**Command will be executed at:**\n%s" % cwd)
                 else:
                     try:
-                        logger.info("Executing command:\n%s" % cmd)
+                        logger.info("**Executing command:**\n%s" % cmd)
                         cmd_utils.run_cmd(cmd, stdout=None, stderr=None,
                                           check=True, shell=True, cwd=cwd)
                     except CalledProcessError as err:

@@ -50,7 +50,7 @@ class CommandLineInterfaceSuper():
         """Display CLI header.
         """
         if not self._cli_header_blacklist or not any(self._cli_header_blacklist):
-            self.logger.info(shell_utils.get_cli_header(self._app_name), date=False)
+            self.logger.info("**%s**" % shell_utils.get_cli_header(self._app_name), date=False, to_file=False)
             print("")
 
     def run(self):
