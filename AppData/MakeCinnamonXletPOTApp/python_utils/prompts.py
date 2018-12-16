@@ -59,9 +59,9 @@ def confirm(prompt=None, response=False):
         prompt = "Confirm"
 
     if response:
-        prompt = "%s [%s/%s]: " % (prompt, "Y", "n")
+        prompt = "**%s [%s/%s]:** " % (prompt, "Y", "n")
     else:
-        prompt = "%s [%s/%s]: " % (prompt, "N", "y")
+        prompt = "**%s [%s/%s]:** " % (prompt, "N", "y")
 
     try:
         while True:
@@ -72,7 +72,7 @@ def confirm(prompt=None, response=False):
                 return response
 
             if ans not in ["y", "n"]:
-                print(Ansi.DEFAULT("Please enter y or n."))
+                print(Ansi.LIGHT_YELLOW("**Please enter y or n.**"))
                 continue
 
             if ans == "y":
@@ -166,8 +166,8 @@ def term_decode(text):
         return text
 
     print(Ansi.LIGHT_YELLOW("* Note: non-ASCII characters entered "
-                       "and terminal encoding unknown -- assuming "
-                       "UTF-8 or Latin-1."))
+                            "and terminal encoding unknown -- assuming "
+                            "UTF-8 or Latin-1."))
 
     try:
         text = text.decode("utf-8")
@@ -209,9 +209,9 @@ def do_prompt(d, key, text, default=None, validator=nonempty):
     try:
         while True:
             if default is not None:
-                prompt = "> " + "%s [%s]: " % (text, default)
+                prompt = "**> %s:\n> Default [**%s**]:** " % (text, default)
             else:
-                prompt = "> " + text + ": "
+                prompt = "**> %s:** " % text
 
             prompt = Ansi.DEFAULT(prompt)
             x = term_input(prompt).strip()
@@ -224,7 +224,7 @@ def do_prompt(d, key, text, default=None, validator=nonempty):
             try:
                 x = validator(x)
             except exceptions.ValidationError as err:
-                print(Ansi.LIGHT_RED("* " + str(err)))
+                print(Ansi.LIGHT_YELLOW("*** %s**" % str(err)))
                 continue
             break
     except (KeyboardInterrupt, SystemExit):
