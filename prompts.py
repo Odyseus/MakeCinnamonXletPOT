@@ -66,13 +66,13 @@ def confirm(prompt=None, response=False):
     try:
         while True:
             # Lower the input case just so I don't have to micro-manage the answer.
-            ans = input(Ansi.INFO(prompt)).lower()
+            ans = input(Ansi.DEFAULT(prompt)).lower()
 
             if not ans:
                 return response
 
             if ans not in ["y", "n"]:
-                print(Ansi.INFO("Please enter y or n."))
+                print(Ansi.DEFAULT("Please enter y or n."))
                 continue
 
             if ans == "y":
@@ -165,7 +165,7 @@ def term_decode(text):
     if isinstance(text, str):
         return text
 
-    print(Ansi.WARNING("* Note: non-ASCII characters entered "
+    print(Ansi.LIGHT_YELLOW("* Note: non-ASCII characters entered "
                        "and terminal encoding unknown -- assuming "
                        "UTF-8 or Latin-1."))
 
@@ -213,7 +213,7 @@ def do_prompt(d, key, text, default=None, validator=nonempty):
             else:
                 prompt = "> " + text + ": "
 
-            prompt = Ansi.INFO(prompt)
+            prompt = Ansi.DEFAULT(prompt)
             x = term_input(prompt).strip()
 
             if default and not x:
@@ -224,7 +224,7 @@ def do_prompt(d, key, text, default=None, validator=nonempty):
             try:
                 x = validator(x)
             except exceptions.ValidationError as err:
-                print(Ansi.ERROR("* " + str(err)))
+                print(Ansi.LIGHT_RED("* " + str(err)))
                 continue
             break
     except (KeyboardInterrupt, SystemExit):
@@ -248,7 +248,7 @@ def read_char(txt):
     str
         The read character.
     """
-    print(Ansi.INFO(txt))
+    print(Ansi.DEFAULT(txt))
     fd = sys.stdin.fileno()
     old_settings = termios.tcgetattr(fd)
 
