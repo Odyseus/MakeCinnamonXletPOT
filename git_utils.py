@@ -48,11 +48,17 @@ def manage_repo(mechanism, action, subtrees=[], do_not_confirm=False,
                         ("--init" if action is "init" else "--remote --merge"))
     elif mechanism == "subtree":
         for sub_tree in subtrees:
-            commands.append("git subtree {cmd} --prefix {prefix} {url} {ref} --squash".format(
+            sub_ref = sub_tree.get("ref", "master")
+            commit_message = "Merge ref. '{ref}' of {sub_url}".format(
+                ref=sub_ref,
+                sub_url=sub_tree["url"]
+            )
+            commands.append("git subtree {cmd} {msg} --prefix {prefix} {url} {ref} --squash".format(
                 cmd="add" if action is "init" else "pull",
+                msg="" if action is "init" else '"-m %s"' % commit_message,
                 prefix=sub_tree["path"],
                 url=sub_tree["url"],
-                ref=sub_tree.get("ref", "master")
+                ref=sub_ref
             ))
 
     if commands:
