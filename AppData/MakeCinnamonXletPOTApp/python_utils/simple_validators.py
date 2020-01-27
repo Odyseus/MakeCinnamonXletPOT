@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 import re
 
+from ipaddress import ip_address
+
 from . import exceptions
 from . import file_utils
 
@@ -33,6 +35,43 @@ def is_valid_host(host):
                 len(host) < 253] + [_hostname_regex.match(x) for x in host.split(".")])
 
 
+def is_valid_ip(address):
+    """Validate IP address (IPv4 or IPv6).
+
+    Parameters
+    ----------
+    address : str
+        The IP address to validate.
+
+    Returns
+    -------
+    bool
+        If it is a valid IP address or not.
+    """
+    try:
+        ip_address(address)
+    except ValueError:
+        return False
+
+    return True
+
+
+def is_valid_integer(integer):
+    """Validate integer.
+
+    Parameters
+    ----------
+    integer : str
+        The string to validate.
+
+    Returns
+    -------
+    bool
+        If the value is a valid integer or not.
+    """
+    return str(integer).isdigit()
+
+
 def validate_output_path(x):
     """Validate output path.
 
@@ -62,52 +101,44 @@ def validate_output_path(x):
     return x
 
 
-def validate_options_1_2(x):
-    """Validate 1 or 2.
+def generate_numeral_options_validator(num, stringify=True):
+    """Generate numeral options validator.
 
     Parameters
     ----------
-    x : str
-        The entered option to validate.
-
-    Returns
-    -------
-    str
-        The validated option.
-
-    Raises
-    ------
-    exceptions.ValidationError
-        Halt execution if option is not valid.
+    num : int
+        The number of numbers that the list of numeral options should have. Stating
+        from 1 and ending at and including num.
+    stringify : bool, optional
+        Whether the list of numbers should be converted and compared to numbers
+        represented as strings.
     """
-    if not x or x not in ["1", "2"]:
-        raise exceptions.ValidationError('Possible options are "1" or "2".')
+    options_list = [str(n + 1) if stringify else n + 1 for n in list(range(num))]
 
-    return x
+    def validate_options(x):
+        """Validate numeral options.
 
+        Parameters
+        ----------
+        x : str
+            The entered option to validate.
 
-def validate_options_1_2_3(x):
-    """Validate 1, 2 or 3.
+        Returns
+        -------
+        str
+            The validated option.
 
-    Parameters
-    ----------
-    x : str
-        The entered option to validate.
+        Raises
+        ------
+        exceptions.ValidationError
+            Halt execution if option is not valid.
+        """
+        if not x or x not in options_list:
+            raise exceptions.ValidationError("Possible options are: %s" % ", ".join(options_list))
 
-    Returns
-    -------
-    str
-        The validated option.
+        return x
 
-    Raises
-    ------
-    exceptions.ValidationError
-        Halt execution if option is not valid.
-    """
-    if not x or x not in ["1", "2", "3"]:
-        raise exceptions.ValidationError('Possible options are "1", "2" or "3".')
-
-    return x
+    return validate_options
 
 
 if __name__ == "__main__":
