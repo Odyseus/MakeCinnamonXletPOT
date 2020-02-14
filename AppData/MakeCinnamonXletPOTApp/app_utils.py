@@ -576,8 +576,10 @@ def scan_xlet(args, app_logger):
 
     if args["--output"]:
         pot_path = os.path.abspath(args["--output"])
+        pot_options_path = pot_path[:-4] + ".json"
     else:
         pot_path = os.path.join(xlet_dir, "po", uuid + ".pot")
+        pot_options_path = os.path.join(xlet_dir, "po", uuid + ".json")
 
     if args["--gen-stats"]:
         pot_path = args["--pot-file"] if args["--pot-file"] else pot_path
@@ -698,7 +700,6 @@ def scan_xlet(args, app_logger):
     pot_settings_data = None
 
     try:
-        pot_options_path = os.path.join(xlet_dir, "po", uuid + ".json")
         if os.path.exists(pot_options_path):
             with open(pot_options_path, "r", encoding="UTF-8") as pot_settings_file:
                 raw_data = pot_settings_file.read()
