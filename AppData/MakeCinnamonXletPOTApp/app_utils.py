@@ -19,14 +19,16 @@ import os
 import time
 
 from collections import OrderedDict
+from shutil import copy2
 from shutil import ignore_patterns
-from subprocess import call
-from subprocess import run
+from shutil import rmtree
 
 
 from .__init__ import __version__
 from .python_utils import cmd_utils
 from .python_utils import exceptions
+from .python_utils import file_utils
+from .python_utils import misc_utils
 from .python_utils import polib
 
 
@@ -449,6 +451,87 @@ def _insert_custom_header(xlet_dir, pot_path, pot_settings_data):
 
     logger.info("POT header customization complete.", date=False)
 
+def _generate_trans_stats(uuid, xlet_dir, pot_path):
+    """Generate translations statistics.
+
+    Generates files that contain the amount of untranslated strings an xlet has.
+
+    Raises
+    ------
+    SystemExit
+        Halt execution if the msgmerge command is not found.
+
+    Parameters
+    ----------
+    uuid : str
+        An xlet UUID.
+    xlet_dir : str
+        Path to an xlet folder.
+    pot_path : str
+        Path to a POT file.
+    """
+    if not cmd_utils.which("msgmerge"):
+        logger.error("**MissingCommand:** msgmerge command not found!!!")
+        raise SystemExit(1)
+
+    markdown_content = []
+    po_tmp_storage = os.path.join(misc_utils.get_system_tempdir(),
+                                  "MakeCinnamonXletPOT-tmp", uuid)
+    trans_stats_file = os.path.join(po_tmp_storage, "po_files_untranslated_table.md")
+    rmtree(po_tmp_storage, ignore_errors=True)
+    os.makedirs(po_tmp_storage, exist_ok=True)
+
+    xlet_po_dir = os.path.join(xlet_dir, "po")
+    tmp_xlet_po_dir = os.path.join(po_tmp_storage, "po")
+    os.makedirs(tmp_xlet_po_dir, exist_ok=True)
+
+    if file_utils.is_real_dir(xlet_po_dir):
+        xlet_po_list = file_utils.recursive_glob(xlet_po_dir, "*.po")
+
+        if xlet_po_list:
+            logger.info(uuid, date=False)
+            markdown_content = [
+                "### %s" % uuid,
+                "",
+                "|LANGUAGE|UNTRANSLATED|",
+                "|--------|------------|",
+            ]
+
+            for po_file_path in xlet_po_list:
+                po_base_name = os.path.basename(po_file_path)
+                tmp_po_file_path = os.path.join(tmp_xlet_po_dir, po_base_name)
+
+                logger.info("**Copying %s to temporary location...**" %
+                            po_base_name, date=False)
+                copy2(po_file_path, tmp_po_file_path)
+
+                logger.info("**Updating temporary %s from localization template...**" %
+                            po_base_name, date=False)
+                cmd_utils.run_cmd([
+                    "msgmerge",
+                    "--silent",             # Shut the heck up.
+                    "--no-wrap",            # Do not wrap long lines.
+                    "--no-fuzzy-matching",  # Do not use fuzzy matching.
+                    "--backup=off",         # Never make backups.
+                    "--update",             # Update .po file, do nothing if up to date.
+                    tmp_po_file_path,       # The .po file to update.
+                    pot_path                # The template file to update from.
+                ], stdout=None, stderr=None)
+
+                logger.info("**Counting untranslated strings...**", date=False)
+                trans_count_cmd = 'msggrep -v -T -e "." "%s" | grep -c ^msgstr'
+                trans_count_output = cmd_utils.run_cmd(trans_count_cmd % tmp_po_file_path,
+                                                       shell=True).stdout
+                trans_count = int(trans_count_output.decode("UTF-8").strip())
+                markdown_content.append("|%s|%d|" % (
+                    po_base_name, trans_count - 1 if trans_count > 0 else trans_count))
+
+    if markdown_content:
+        with open(trans_stats_file, "w", encoding="UTF-8") as trans_file:
+            trans_file.write("\n".join(markdown_content))
+
+        cmd_utils.run_cmd(["xdg-open", trans_stats_file])
+
 
 def scan_xlet(args, app_logger):
     """Scan xlet.
@@ -480,20 +563,24 @@ def scan_xlet(args, app_logger):
 
     uuid = os.path.basename(xlet_dir)
 
-    logger.info("Xlet: %s" % uuid, date=False)
-
-    if args["--install"]:
-        _do_install(uuid, xlet_dir)
-        raise SystemExit()
-
-    if args["--remove"]:
-        _do_remove(uuid)
-        raise SystemExit()
+    logger.info("**Xlet: %s**" % uuid, date=False)
 
     if args["--output"]:
         pot_path = os.path.abspath(args["--output"])
     else:
         pot_path = os.path.join(xlet_dir, "po", uuid + ".pot")
+
+    if args["--gen-stats"]:
+        pot_path = args["--pot-file"] if args["--pot-file"] else pot_path
+        raise SystemExit(_generate_trans_stats(uuid, xlet_dir, pot_path))
+
+    if args["--install"]:
+        raise SystemExit(_do_install(uuid, xlet_dir))
+
+    if args["--remove"]:
+        raise SystemExit(_do_remove(uuid))
+
+    # NOTE: From this point down, all actions are to generate a new POT file.
 
     # Remove an existent POT file. This is to force `xgettext` to always create a new POT file.
     # `xgettext` doesn't remove obsolete strings from existent POT files and it doesn't update

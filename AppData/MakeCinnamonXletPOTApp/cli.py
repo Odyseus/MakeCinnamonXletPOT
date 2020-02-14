@@ -37,8 +37,9 @@ Usage:
            [-k <keyword>... | --keyword=<keyword>...]
            [-g <pattern>... | --ignored-pattern=<pattern>...]
            [-x <path> | --xlet-dir=<path>]
-    app.py (-i | --install | -r | --remove)
+    app.py (-i | --install | -r | --remove | -t | --gen-stats)
            [-x <path> | --xlet-dir=<path>]
+           [-f <path> | --pot-file=<path>]
     app.py generate system_executable
 
 Options:
@@ -94,6 +95,10 @@ Options:
     The path to the xlet directory. If not specified, the current working
     directory will be used.
 
+-f <path>, --pot-file=<path>
+    The path to a POT file used to count untranslated strings when running the
+    **--gen-stats** option. By default **<uuid>/po/<uuid>.pot** is used.
+
 -i, --install
     Compiles and installs any .po files contained inside an xlet "po" folder
     to the system locale store. The xlet UUID will be used as the
@@ -102,6 +107,11 @@ Options:
 -r, --remove
     The opposite of install, removes translations from the system locale store.
     Again, the xlet UUID will be used to find the correct files to remove.
+
+-t, --gen-stats
+    Generate language statistics. It generates a table in Markdown format
+    containg the number of untranslated strings for each .po file inside
+    an xlet's **po** folder.
 
 """.format(appname=__appname__,
            appdescription=__appdescription__,

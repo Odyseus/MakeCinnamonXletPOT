@@ -16,7 +16,9 @@ __make_cinnamon_xlet_pot_cli_{current_date}(){
     prev="${COMP_WORDS[COMP_CWORD-1]}"
     main_options="-j --skip-js -p --skip-python -o --output= -c --custom-header \
 -a --scan-additional-file= -s --skip-key= -k --keyword= -g --ignored-pattern= -x --xlet-dir= \
--i --install -r --remove generate -h --help --manual --version"
+-i --install -r --remove -t --gen-stats generate -h --help --manual --version"
+
+    # Handle --xxxxxx=
 
     # Completion of commands and "first level" options.
     if [[ $COMP_CWORD == 1 ]]; then
@@ -30,6 +32,10 @@ __make_cinnamon_xlet_pot_cli_{current_date}(){
     case $cmd in
     "-i"|"--install"|"-r"|"--remove")
         COMPREPLY=( $(compgen -W "-x --xlet-dir=" -- "${cur}") )
+        _decide_nospace_{current_date} ${COMPREPLY[0]}
+        ;;
+    "-t"|"--gen-stats")
+        COMPREPLY=( $(compgen -W "-x --xlet-dir= -f --pot-file=" -- "${cur}") )
         _decide_nospace_{current_date} ${COMPREPLY[0]}
         ;;
     "generate")
