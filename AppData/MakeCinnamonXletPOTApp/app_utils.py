@@ -181,7 +181,7 @@ def _extract_settings_strings(data, rel_path, pot_file, parent="", ignored_keys=
     """
     for key in data.keys():
         if key in ignored_keys:
-            logger.info("Key <%s> ignored." % key, date=False)
+            logger.info("**Key <%s> ignored.**" % key, date=False)
             continue
 
         if key in ("description", "tooltip", "units", "title"):
@@ -299,7 +299,7 @@ def _remove_empty_folders(path):
     files = os.listdir(path)
 
     if len(files) == 0:
-        logger.info("Removing empty folder: %s" % path, date=False)
+        logger.info("**Removing empty folder:** %s" % path, date=False)
         os.rmdir(path)
 
 
@@ -322,10 +322,12 @@ def _do_install(uuid, xlet_dir):
     files_installed = 0
 
     if not os.path.exists(podir):
-        msg = "The 'po' directory seems not to be present.\n"
-        msg += "This xlet might not have localizations that need to be installed.\n"
-        msg += "Or this tool has not been executed from inside the xlet folder."
-        raise exceptions.WrongExecutionLocation(msg)
+        msg = [
+            "The 'po' directory seems not to be present.",
+            "This xlet might not have localizations that need to be installed.",
+            "Or this tool has not been executed from inside the xlet folder."
+        ]
+        raise exceptions.WrongExecutionLocation("\n".join(msg))
 
     for root, dirs, files in os.walk(podir):
         for file in files:
@@ -338,9 +340,9 @@ def _do_install(uuid, xlet_dir):
                 files_installed += 1
 
     if files_installed == 0:
-        logger.info("Nothing to install.", date=False)
+        logger.info("**Nothing to install.**", date=False)
     else:
-        logger.info("Installed %i files." % files_installed, date=False)
+        logger.info("**Installed %i files.**" % files_installed, date=False)
 
 
 def _do_remove(uuid):
@@ -364,9 +366,9 @@ def _do_remove(uuid):
             _remove_empty_folders(lang_locale_dir)
 
     if files_removed == 0:
-        logger.info("Nothing to remove.", date=False)
+        logger.info("**Nothing to remove.**", date=False)
     else:
-        logger.info("Removed %i files" % files_removed, date=False)
+        logger.info("**Removed %i files.**" % files_removed, date=False)
 
 
 def _insert_custom_header(xlet_dir, pot_path, pot_settings_data):
@@ -400,7 +402,7 @@ def _insert_custom_header(xlet_dir, pot_path, pot_settings_data):
             "COPY_INITIAL_YEAR": "",
             "COPY_CURRENT_YEAR": str(datetime.datetime.now().year),
             "PACKAGE": os.path.basename(xlet_dir),
-            "VERSION": md["version"] if "version" in md else "VERSION",
+            "VERSION": md.get("version", "VERSION"),
             "SCRIPT_VERSION": __version__,
             "TIMESTAMP": _get_timestamp(),
         }
@@ -449,7 +451,8 @@ def _insert_custom_header(xlet_dir, pot_path, pot_settings_data):
         logger.error(detail)
         raise SystemExit("Failed to set custom header.")
 
-    logger.info("POT header customization complete.", date=False)
+    logger.info("**POT header customization complete.**", date=False)
+
 
 def _generate_trans_stats(uuid, xlet_dir, pot_path):
     """Generate translations statistics.
@@ -594,6 +597,18 @@ def scan_xlet(args, app_logger):
     pwd = os.getcwd()
     os.chdir(xlet_dir)
 
+    # NOTE: To future me to avoid headaches and nightmares!!!
+    #
+    # 1. Create the po directory. Otherwise, the polib module will fail if there isn't an
+    #    existent POT file when calling its `potfile.save()` method.
+    # 2. Run xgettext commands (to scan JavaScript and Python files) BEFORE running the _scan_json
+    #    function using polib. Because:
+    #    - Running polib before xgettext will generate POT files with double headers. ¬¬
+    #    - Running polib before xgettext with --omit-header fixes the double headers problem, but
+    #      the absolutely retarded xgettext will f*ck up all unicode characters.
+
+    os.makedirs(os.path.dirname(pot_path), mode=0o755, exist_ok=True)
+
     if not args["--skip-js"] or not args["--skip-python"]:
         if not cmd_utils.which("xgettext"):
             raise exceptions.MissingCommand(
@@ -607,12 +622,8 @@ def scan_xlet(args, app_logger):
             "--output=%s" % pot_path
         ]
 
-    # Create the po directory. Otherwise, the polib module will fail if there isn't an
-    # existent POT file when calling its `potfile.save()` method.
-    os.makedirs(os.path.dirname(pot_path), mode=0o755, exist_ok=True)
-
     if not args["--skip-js"]:
-        logger.info("Scanning JavaScript files...", date=False)
+        logger.info("**Scanning JavaScript files...**", date=False)
 
         js_files = []
 
@@ -631,17 +642,21 @@ def scan_xlet(args, app_logger):
             js_files += [os.path.join(rel_root, file) for file in files if file.endswith(".js")]
 
         if len(js_files) == 0:
-            logger.info("No JavaScript files found.", date=False)
+            logger.info("**No JavaScript files found.**", date=False)
         else:
             if ignored_patterns:
                 ignored_js_files = ignore_patterns(*ignored_patterns)(None, js_files)
                 js_files = [file for file in js_files if file not in ignored_js_files]
 
-            logger.info("Found %i JavaScript file(s)" % len(js_files), date=False)
+            logger.info("**Found %i JavaScript file(s)**" % len(js_files), date=False)
+
+            if os.path.exists(pot_path):
+                xgettext_command.append("--join-existing")
+
             run(xgettext_command + ["--language=JavaScript"] + sorted(js_files))
 
     if not args["--skip-python"]:
-        logger.info("Scanning Python files...", date=False)
+        logger.info("**Scanning Python files...**", date=False)
 
         py_files = []
 
@@ -649,7 +664,7 @@ def scan_xlet(args, app_logger):
             py_files += [a for a in additional_files if a.endswith(".py")]
 
             if len(py_files) > 0:
-                logger.info("Including the following additional Python file/s...", date=False)
+                logger.info("**Including the following additional Python file/s...**", date=False)
 
                 for f in py_files:
                     logger.info(f, date=False)
@@ -660,13 +675,13 @@ def scan_xlet(args, app_logger):
             py_files += [os.path.join(rel_root, file) for file in files if file.endswith(".py")]
 
         if len(py_files) == 0:
-            logger.info("No Python files found.", date=False)
+            logger.info("**No Python files found.**", date=False)
         else:
             if ignored_patterns:
                 ignored_py_files = ignore_patterns(*ignored_patterns)(None, py_files)
                 py_files = [file for file in py_files if file not in ignored_py_files]
 
-            logger.info("Found %i Python file(s)" % len(py_files), date=False)
+            logger.info("**Found %i Python file(s)**" % len(py_files), date=False)
 
             # Adding the --join-existing argument when there isn't a generated .pot file will
             # not save the strings extracted from Python files.
@@ -701,15 +716,15 @@ def scan_xlet(args, app_logger):
 
     ignored_keys = list(set(ignored_keys))
 
-    logger.info("Scanning metadata.json and settings-schema.json files...", date=False)
+    logger.info("**Scanning metadata.json and settings-schema.json files...**", date=False)
     _scan_json(xlet_dir, pot_path, ignored_keys)
 
     os.chdir(pwd)
 
-    logger.info("Extraction complete.", date=False)
+    logger.info("**Extraction complete.**", date=False)
 
     if args["--custom-header"]:
-        logger.info("Customizing POT header...", date=False)
+        logger.info("**Customizing POT header...**", date=False)
         _insert_custom_header(xlet_dir, pot_path, pot_settings_data)
 
     raise SystemExit()

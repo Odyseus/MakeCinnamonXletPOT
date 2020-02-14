@@ -10,7 +10,6 @@ root_folder : str
     The main folder containing the application. All commands must be executed from this location
     without exceptions.
 """
-
 import os
 
 from . import app_utils
@@ -72,19 +71,19 @@ Options:
 
 -o <path>, --output=<path>
     Use this option to specify the location where to store the generated .pot
-    file. By default <uuid>/po/<uuid>.pot is used.
+    file. By default **<uuid>/po/<uuid>.pot** is used.
 
 -c, --custom-header
     Modify the .pot file header with custom data. The data will be extracted
     from a file named exactly <uuid>.pot that should be placed inside an xlet
-    "po" folder.
+    **po** folder.
 
 -a <path>, --scan-additional-file=<path>
     Specify additional files to scan that are outside the xlet folder.
     Can be full paths or relative (to the xlet folder) paths.
     Only JavaScript and Python files can be specified and they all should
     have their file extension specified (.js or .py).
-    Warning!!! Absolute paths will be displayed as-is inside the
+    **Warning!!!** Absolute paths will be displayed as-is inside the
     generated POT file comments.
 
 -s <key>, --skip-key=<key>
@@ -100,7 +99,7 @@ Options:
     **--gen-stats** option. By default **<uuid>/po/<uuid>.pot** is used.
 
 -i, --install
-    Compiles and installs any .po files contained inside an xlet "po" folder
+    Compiles and installs any .po files contained inside an xlet **po** folder
     to the system locale store. The xlet UUID will be used as the
     translation domain.
 
