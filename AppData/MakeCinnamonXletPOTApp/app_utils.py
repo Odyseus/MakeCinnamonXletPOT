@@ -335,8 +335,8 @@ def _do_install(uuid, xlet_dir):
             if ext == ".po":
                 lang_locale_dir = os.path.join(LOCALE_DIR, locale_name, "LC_MESSAGES")
                 os.makedirs(lang_locale_dir, mode=0o755, exist_ok=True)
-                call(["msgfmt", "-c", os.path.join(root, file), "-o",
-                      os.path.join(lang_locale_dir, "%s.mo" % uuid)])
+                cmd_utils.run_cmd(["msgfmt", "-c", os.path.join(root, file), "-o",
+                                   os.path.join(lang_locale_dir, "%s.mo" % uuid)])
                 files_installed += 1
 
     if files_installed == 0:
@@ -633,10 +633,12 @@ def scan_xlet(args, app_logger):
         js_files = []
 
         if additional_files:
-            js_files += [a for a in additional_files if a.endswith(".js")]
+            for file in additional_files:
+                if file[-3:] == ".js":
+                    js_files.append(file)
 
             if len(js_files) > 0:
-                logger.info("Including the following additional JavaScript file/s...", date=False)
+                logger.info("**Including the following additional JavaScript file/s...**", date=False)
 
                 for f in js_files:
                     logger.info(f, date=False)
@@ -644,7 +646,9 @@ def scan_xlet(args, app_logger):
         for root, dirs, files in os.walk(xlet_dir):
             dirs.sort()
             rel_root = os.path.relpath(root)
-            js_files += [os.path.join(rel_root, file) for file in files if file.endswith(".js")]
+            for file in files:
+                if file[-3:] == ".js":
+                    js_files.append(os.path.join(rel_root, file))
 
         if len(js_files) == 0:
             logger.info("**No JavaScript files found.**", date=False)
@@ -658,7 +662,7 @@ def scan_xlet(args, app_logger):
             if os.path.exists(pot_path):
                 xgettext_command.append("--join-existing")
 
-            run(xgettext_command + ["--language=JavaScript"] + sorted(js_files))
+            cmd_utils.run_cmd(xgettext_command + ["--language=JavaScript"] + sorted(js_files))
 
     if not args["--skip-python"]:
         logger.info("**Scanning Python files...**", date=False)
@@ -666,7 +670,9 @@ def scan_xlet(args, app_logger):
         py_files = []
 
         if additional_files:
-            py_files += [a for a in additional_files if a.endswith(".py")]
+            for file in additional_files:
+                if file[-3:] == ".py":
+                    py_files.append(file)
 
             if len(py_files) > 0:
                 logger.info("**Including the following additional Python file/s...**", date=False)
@@ -677,7 +683,9 @@ def scan_xlet(args, app_logger):
         for root, dirs, files in os.walk(xlet_dir):
             dirs.sort()
             rel_root = os.path.relpath(root)
-            py_files += [os.path.join(rel_root, file) for file in files if file.endswith(".py")]
+            for file in files:
+                if file[-3:] == ".py":
+                    py_files.append(os.path.join(rel_root, file))
 
         if len(py_files) == 0:
             logger.info("**No Python files found.**", date=False)
@@ -695,7 +703,7 @@ def scan_xlet(args, app_logger):
             if os.path.exists(pot_path):
                 xgettext_command.append("--join-existing")
 
-            run(xgettext_command + ["--language=Python"] + sorted(py_files))
+            cmd_utils.run_cmd(xgettext_command + ["--language=Python"] + sorted(py_files))
 
     pot_settings_data = None
 
