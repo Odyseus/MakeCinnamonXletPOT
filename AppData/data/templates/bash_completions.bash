@@ -19,6 +19,26 @@ __make_cinnamon_xlet_pot_cli_{current_date}(){
 -i --install -r --remove -t --gen-stats generate -h --help --manual --version"
 
     # Handle --xxxxxx=
+    if [[ ${prev} == "--"* && ${cur} == "=" ]] ; then
+        type "compopt" &> /dev/null && compopt -o filenames
+        COMPREPLY=(*)
+        return 0
+    fi
+
+    # Handle --xxxxx=path
+    case ${prev} in
+        "="|"-o"|"-e")
+            # Unescape space
+            cur=${cur//\\ / }
+            # Expand tilde to $HOME
+            [[ ${cur} == "~/"* ]] && cur=${cur/\~/$HOME}
+            # Show completion if path exist (and escape spaces)
+            type "compopt" &> /dev/null && compopt -o filenames
+            local files=("${cur}"*)
+            [[ -e ${files[0]} ]] && COMPREPLY=( "${files[@]// /\ }" )
+            return 0
+        ;;
+    esac
 
     # Completion of commands and "first level" options.
     if [[ $COMP_CWORD == 1 ]]; then
