@@ -552,10 +552,13 @@ def scan_xlet(args, app_logger):
     """
     global logger
     logger = app_logger
-    keywords = args["--keyword"] if args["--keyword"] else ["_"]
-    ignored_patterns = args["--ignored-pattern"]
-    additional_files = args["--scan-additional-file"]
-    skip_keys = args["--skip-key"]
+
+    # NOTE: list(set()) is cast to workaround docopt bug that duplicates arguments.
+    keywords = list(set(args["--keyword"])) if args["--keyword"] else ["_"]
+    ignored_patterns = list(set(args["--ignored-pattern"]))
+    additional_files = list(set(args["--scan-additional-file"]))
+    skip_keys = list(set(args["--skip-key"]))
+
     xlet_dir = os.path.abspath(args["--xlet-dir"])
 
     if not os.path.exists(xlet_dir):
