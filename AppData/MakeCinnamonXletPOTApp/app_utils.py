@@ -419,8 +419,11 @@ def _insert_custom_header(xlet_dir, pot_path, pot_settings_data):
             current_year = metadata["COPY_CURRENT_YEAR"]
             copy_initial_year = pot_settings_data.get("COPY_INITIAL_YEAR", "")
 
-            if copy_initial_year and copy_initial_year != current_year:
-                copy_initial_year = copy_initial_year + "-"
+            if copy_initial_year:
+                if copy_initial_year != current_year:
+                    copy_initial_year = copy_initial_year + "-"
+                elif copy_initial_year == current_year:
+                    copy_initial_year = ""
 
             metadata["COPY_INITIAL_YEAR"] = copy_initial_year
             metadata["FIRST_AUTHOR"] = pot_settings_data.get("FIRST_AUTHOR", "FIRST_AUTHOR")
