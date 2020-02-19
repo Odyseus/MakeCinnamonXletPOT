@@ -8,8 +8,15 @@ from copy import deepcopy
 from . import shell_utils
 
 from .exceptions import ExceptionWhitoutTraceBack
-from .jsonschema import Draft4Validator as schema_validator
-from .jsonschema import draft4_format_checker as format_checker
+from .exceptions import MissingDependencyModule
+
+
+try:
+    from jsonschema import Draft7Validator as schema_validator
+    from jsonschema import draft7_format_checker as format_checker
+    JSONSCHEMA_INSTALLED = True
+except ImportError:
+    JSONSCHEMA_INSTALLED = False
 
 
 _extra_types = {
@@ -55,20 +62,23 @@ def validate(instance, schema,
         Text to be displayed as "CLI header".
     extra_types : dict, optional
         Extra type checks.
-    logger : object
-        See :any:`LogSystem`.
-
-    Raises
-    ------
-    SchemaValidationError
-        See :any:`SchemaValidationError`.
+    logger : LogSystem
+        The logger.
 
     Returns
     -------
     int
         1 (one) if errors were found. 0 (zero) if no errors were found.
         It only returns if raise_error is False.
+
+    Raises
+    ------
+    SchemaValidationError
+        See :any:`SchemaValidationError`.
     """
+    if not JSONSCHEMA_INSTALLED:
+        raise MissingDependencyModule("Missing 'jsonschema' module.")
+
     # Just in case, use a copy of instance to validate, not the original.
     try:
         instance_copy = deepcopy(instance)
