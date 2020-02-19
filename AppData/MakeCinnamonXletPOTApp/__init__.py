@@ -10,4 +10,4 @@ __appname__ = "Make Cinnamon Xlet POT"
 
 __appdescription__ = "CLI utility to generate POT files for Cinnamon xlets."
 
-__version__ = "2020-02-14 03:47:21.876"
+__version__ = "2020-02-19 12:00:13.466"
