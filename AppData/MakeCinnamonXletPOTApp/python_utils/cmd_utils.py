@@ -42,8 +42,8 @@ def popen(cmd, stdout=None, stderr=None, output_stream=STREAM_BOTH,
         A mapping object representing the string environment.
     cwd : None, optional
         Path to working directory.
-    logger : object
-        See :any:`LogSystem`.
+    logger : LogSystem
+        The logger.
 
     Returns
     -------
@@ -102,8 +102,8 @@ def exec_command(cmd, cwd=None, do_wait=True, do_log=True, logger=None):
         Call or not the Popen wait() method. (default: {True})
     do_log : bool, optional
         Log or not the command output. (default: {True})
-    logger : object
-        See :any:`LogSystem`.
+    logger : LogSystem
+        The logger.
     """
     try:
         po = Popen(
@@ -134,17 +134,17 @@ def exec_command(cmd, cwd=None, do_wait=True, do_log=True, logger=None):
 def get_environment(set_vars={}, unset_vars=[]):
     """Return a dict with os.environ.
 
-    Returns
-    -------
-    dict
-        A copy of the system environment.
-
     Parameters
     ----------
     set_vars : dict, optional
         A dictinary used to add or override keys in the default environment variables.
     unset_vars : list, optional
         A list of keys to remove from the default environment variables.
+
+    Returns
+    -------
+    dict
+        A copy of the system environment.
     """
     env = {}
     env.update(os.environ)
@@ -218,7 +218,7 @@ def find_executables(executable):
     return None
 
 
-def run_cmd(cmd, stdout=PIPE, stderr=PIPE, env=get_environment(), **kwargs):
+def run_cmd(cmd, stdout=PIPE, stderr=PIPE, env=True, **kwargs):
     """See :any:`subprocess.run`.
 
     Parameters
@@ -236,9 +236,15 @@ def run_cmd(cmd, stdout=PIPE, stderr=PIPE, env=get_environment(), **kwargs):
 
     Returns
     -------
-    object
-        See :any:`subprocess.CompletedProcess`.
+    subprocess.CompletedProcess
+        A ``subprocess.CompletedProcess`` instance.
     """
+    # NOTE: This is a workaround to avoid putting the call to get_environment directly inside
+    # the function definition arguments. Otherwise, when generating the documentation with
+    # Sphinx, the entire environment is dumped into the generated documentation. ¬¬
+    if env is True:
+        env = get_environment()
+
     return run(cmd, stdout=stdout, stderr=stderr, env=env, **kwargs)
 
 
