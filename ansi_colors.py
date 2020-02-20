@@ -49,7 +49,9 @@ color_table = {
 }
 
 
-_bold_markdown_re = re.compile(r"\*\*([^\*\*].*?)\*\*")
+_bold_markdown_re = re.compile(
+    r"^\*{2}([\s\S]+?)\*{2}(?!\*)"  # **word**
+)
 _bold_placeholder = r"\033[0m\033[1;49;{code}m\1\033[0m\033[0;49;{code}m"
 
 
