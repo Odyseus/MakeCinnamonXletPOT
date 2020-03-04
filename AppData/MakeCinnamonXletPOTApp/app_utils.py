@@ -462,11 +462,6 @@ def _generate_trans_stats(uuid, xlet_dir, pot_path):
 
     Generates files that contain the amount of untranslated strings an xlet has.
 
-    Raises
-    ------
-    SystemExit
-        Halt execution if the msgmerge command is not found.
-
     Parameters
     ----------
     uuid : str
@@ -475,6 +470,11 @@ def _generate_trans_stats(uuid, xlet_dir, pot_path):
         Path to an xlet folder.
     pot_path : str
         Path to a POT file.
+
+    Raises
+    ------
+    SystemExit
+        Halt execution if the msgmerge command is not found.
     """
     if not cmd_utils.which("msgmerge"):
         logger.error("**MissingCommand:** msgmerge command not found!!!")
@@ -542,19 +542,19 @@ def _generate_trans_stats(uuid, xlet_dir, pot_path):
 def scan_xlet(args, app_logger):
     """Scan xlet.
 
-    Raises
-    ------
-    exceptions.MissingCommand
-        See <class :any:`exceptions.MissingCommand`>.
-    SystemExit
-        Quit program.
-
     Parameters
     ----------
     args : list
         The list of arguments passed by the CLI application.
     app_logger : object
         See <class :any:`LogSystem`>.
+
+    Raises
+    ------
+    exceptions.MissingCommand
+        See <class :any:`exceptions.MissingCommand`>.
+    SystemExit
+        Quit program.
     """
     global logger
     logger = app_logger
