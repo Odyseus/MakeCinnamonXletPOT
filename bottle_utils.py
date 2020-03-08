@@ -58,7 +58,9 @@ def start_server(server_args):
     """
     os.chdir(server_args.get("www_root"))
     os.execv(server_args.get("web_app_path"), [" "] + [
-        server_args.get("host"), server_args.get("port")
+        server_args.get("host"),
+        server_args.get("port"),
+        os.path.dirname(server_args.get("web_app_path"))
     ])
 
 
