@@ -95,7 +95,8 @@ class MailSystem():
         elif ask_for_password:
             import getpass
 
-            sender_password = getpass.getpass(prompt=Ansi.DEFAULT("**Enter Sender E-Mail Password:** "))
+            sender_password = getpass.getpass(
+                prompt=Ansi.DEFAULT("**Enter Sender E-Mail Password:** "))
 
         return sender_password
 

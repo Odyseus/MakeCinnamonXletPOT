@@ -498,7 +498,8 @@ class diff_match_patch:
         pointermid = pointermax
         pointerend = 0
         while pointermin < pointermid:
-            if (text1[-pointermid:len(text1) - pointerend] == text2[-pointermid:len(text2) - pointerend]):
+            if (text1[-pointermid:len(text1) - pointerend] ==
+                    text2[-pointermid:len(text2) - pointerend]):
                 pointermin = pointermid
                 pointerend = pointermin
             else:
@@ -701,7 +702,8 @@ class diff_match_patch:
                 overlap_length1 = self.diff_commonOverlap(deletion, insertion)
                 overlap_length2 = self.diff_commonOverlap(insertion, deletion)
                 if overlap_length1 >= overlap_length2:
-                    if (overlap_length1 >= len(deletion) / 2.0 or overlap_length1 >= len(insertion) / 2.0):
+                    if (overlap_length1 >= len(deletion) /
+                            2.0 or overlap_length1 >= len(insertion) / 2.0):
                         # Overlap found.  Insert an equality and trim the surrounding edits.
                         diffs.insert(pointer, (self.DIFF_EQUAL,
                                                insertion[:overlap_length1]))
@@ -711,7 +713,8 @@ class diff_match_patch:
                                               insertion[overlap_length1:])
                         pointer += 1
                 else:
-                    if (overlap_length2 >= len(deletion) / 2.0 or overlap_length2 >= len(insertion) / 2.0):
+                    if (overlap_length2 >= len(deletion) /
+                            2.0 or overlap_length2 >= len(insertion) / 2.0):
                         # Reverse overlap found.
                         # Insert an equality and swap and trim the surrounding edits.
                         diffs.insert(pointer, (self.DIFF_EQUAL, deletion[:overlap_length2]))
