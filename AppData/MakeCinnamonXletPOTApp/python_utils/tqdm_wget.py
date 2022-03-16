@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 """Module to download files. It displays a progress bar of the download progress.
 """
