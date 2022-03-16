@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 """
 Original Perl version by: John Gruber http://daringfireball.net/ 10 May 2008

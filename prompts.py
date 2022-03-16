@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 """CLI prompts and confirmation "dialogs" utilities.
 """

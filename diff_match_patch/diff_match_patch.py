@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 """Diff Match and Patch
 Copyright 2018 The diff-match-patch Authors.
 https://github.com/google/diff-match-patch

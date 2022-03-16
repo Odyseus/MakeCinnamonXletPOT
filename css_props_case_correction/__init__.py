@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 """Countermessure for mediocre web technologies (forgive the redundancy).
 """

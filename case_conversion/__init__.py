@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 """Based on `case-conversion <https://github.com/AlejandroFrias/case-conversion>`__.
 
