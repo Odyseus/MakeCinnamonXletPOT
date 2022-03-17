@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """Module to download files. It displays a progress bar of the download progress.
 """
+# NOTE: Web developers can go f*ck themselves!!!
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
 
 from urllib.request import urlretrieve
 
