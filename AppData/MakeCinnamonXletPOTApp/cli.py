@@ -74,7 +74,7 @@ Options:
 
 -c, --custom-header
     Modify the .pot file header with custom data. The data will be extracted
-    from a file named exactly <uuid>.pot that should be placed inside an xlet
+    from a file named exactly **<uuid>.pot** that should be placed inside an xlet
     **po** folder.
 
 -a <path>, --scan-additional-file=<path>
